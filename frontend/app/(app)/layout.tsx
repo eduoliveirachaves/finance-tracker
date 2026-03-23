@@ -10,9 +10,9 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   }
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex h-screen overflow-hidden bg-background-dark">
       <Navbar />
-      <main className="flex-1 overflow-auto p-6">{children}</main>
+      <main className="flex-1 flex flex-col lg:flex-row overflow-hidden">{children}</main>
     </div>
   );
 }

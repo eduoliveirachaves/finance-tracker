@@ -4,9 +4,9 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { get } from "@/lib/api";
 import type { DashboardData } from "@/lib/types";
-import { DashboardSummary } from "@/components/dashboard/DashboardSummary";
-import { BudgetAlertList } from "@/components/dashboard/BudgetAlertList";
-import { AmountDisplay } from "@/components/shared/AmountDisplay";
+import { NetWorthOverview } from "@/components/dashboard/NetWorthOverview";
+import { ActiveCards } from "@/components/dashboard/ActiveCards";
+import { LiveFeed } from "@/components/dashboard/LiveFeed";
 import { MonthPicker } from "@/components/shared/MonthPicker";
 
 const now = new Date();
@@ -15,62 +15,28 @@ export default function DashboardPage() {
   const [year, setYear] = useState(now.getFullYear());
   const [month, setMonth] = useState(now.getMonth() + 1);
 
-  const { data, isLoading, error } = useQuery<DashboardData>({
+  const { data, isLoading } = useQuery<DashboardData>({
     queryKey: ["dashboard", year, month],
     queryFn: () => get<DashboardData>(`/dashboard?year=${year}&month=${month}`),
   });
 
+  const totalBalance = data 
+    ? parseFloat(data.net_balance) 
+    : 1284092.45;
+
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Dashboard</h1>
-        <MonthPicker year={year} month={month} onChange={(y, m) => { setYear(y); setMonth(m); }} />
-      </div>
+    <>
+      <section className="flex-[3] flex flex-col h-full overflow-y-auto border-r border-[#1C1F2B] bg-background-dark p-8 gap-8">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-bold font-display text-text-main">Dashboard Overview</h2>
+          <MonthPicker year={year} month={month} onChange={(y, m) => { setYear(y); setMonth(m); }} />
+        </div>
+        
+        <NetWorthOverview totalBalance={totalBalance} />
+        <ActiveCards />
+      </section>
 
-      {isLoading && <p className="text-slate-400">Loading…</p>}
-      {error && <p className="text-red-500">Failed to load dashboard</p>}
-      {data && (
-        <>
-          <DashboardSummary data={data} />
-
-          <section>
-            <h2 className="mb-3 text-lg font-semibold">Recent Transactions</h2>
-            {data.recent_transactions.length === 0 ? (
-              <p className="text-sm text-slate-400">No transactions yet. Add your first transaction to get started.</p>
-            ) : (
-              <div className="overflow-x-auto rounded-md border border-slate-200">
-                <table className="w-full text-sm">
-                  <thead className="border-b border-slate-200 bg-slate-50">
-                    <tr>
-                      <th className="px-4 py-2 text-left font-medium text-slate-500">Date</th>
-                      <th className="px-4 py-2 text-left font-medium text-slate-500">Category</th>
-                      <th className="px-4 py-2 text-left font-medium text-slate-500">Modality</th>
-                      <th className="px-4 py-2 text-right font-medium text-slate-500">Amount</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {data.recent_transactions.map((t) => (
-                      <tr key={t.id} className="border-b border-slate-100">
-                        <td className="px-4 py-2">{t.date}</td>
-                        <td className="px-4 py-2">{t.category.name}</td>
-                        <td className="px-4 py-2 capitalize">{t.modality}</td>
-                        <td className={`px-4 py-2 text-right font-medium ${t.type === "income" ? "text-green-600" : "text-red-500"}`}>
-                          {t.type === "income" ? "+" : "-"}<AmountDisplay amount={t.amount} />
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </section>
-
-          <section>
-            <h2 className="mb-3 text-lg font-semibold">Budget Alerts</h2>
-            <BudgetAlertList alerts={data.budget_alerts} />
-          </section>
-        </>
-      )}
-    </div>
+      <LiveFeed transactions={data?.recent_transactions || []} isLoading={isLoading} />
+    </>
   );
 }

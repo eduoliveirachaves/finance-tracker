@@ -1,26 +1,82 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-primary: #00FF94;
+  --color-background-light: #f5f8f7;
+  --color-background-dark: #090A0F;
+  --color-surface: #12141D;
+  --color-surface-hover: #1C1F2B;
+  --color-accent: #B026FF;
+  --color-danger: #FF3366;
+  --color-muted: #828A9F;
+  --color-text-main: #F2F4F8;
+
+  --font-display: var(--font-space-grotesk), sans-serif;
+  --font-body: 'Satoshi', sans-serif;
+  --font-mono: var(--font-jetbrains-mono), monospace;
+
+  --shadow-glow-primary: 0 0 24px rgba(0, 255, 148, 0.2);
+  --shadow-glow-accent: 0 0 24px rgba(176, 38, 255, 0.2);
+  --shadow-inner-surface: inset 0 2px 4px 0 rgba(0, 0, 0, 0.2);
+
+  --background-image-card-noise: url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E');
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  body {
+    font-family: var(--font-body);
+    background-color: var(--color-background-dark);
+    color: var(--color-text-main);
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Custom Scrollbar for Wallet */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Skeuomorphic Card Effects */
+.credit-card {
+  perspective: 1000px;
+  transform-style: preserve-3d;
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+.credit-card:hover {
+  transform: rotateY(10deg) rotateX(5deg) scale(1.02);
+  box-shadow: -10px 10px 30px rgba(0, 255, 148, 0.15);
+}
+.card-glare {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(105deg, transparent 20%, rgba(255,255,255,0.1) 25%, transparent 30%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+  border-radius: 16px;
+}
+.credit-card:hover .card-glare {
+  opacity: 1;
+  animation: glare-slide 2s infinite linear;
+}
+
+@keyframes glare-slide {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* Sparkline Animation */
+.sparkline-path {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: dash 2s ease-out forwards;
+}
+@keyframes dash {
+  to { stroke-dashoffset: 0; }
 }

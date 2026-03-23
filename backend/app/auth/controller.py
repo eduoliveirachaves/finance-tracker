@@ -1,16 +1,13 @@
-from datetime import timedelta
-
-from fastapi import APIRouter, Depends, HTTPException, Response, status
-from fastapi import Cookie
-from jose import JWTError
-from sqlalchemy.orm import Session
 
 from app.auth import service
-from app.auth.model import LoginRequest, RegisterRequest, TokenResponse, UserResponse, User
+from app.auth.model import LoginRequest, RegisterRequest, TokenResponse, User, UserResponse
 from app.core.config import get_settings
 from app.core.database import get_db
 from app.core.deps import get_current_user
 from app.core.security import create_access_token, create_refresh_token, decode_token
+from fastapi import APIRouter, Cookie, Depends, HTTPException, Response, status
+from jose import JWTError
+from sqlalchemy.orm import Session
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 

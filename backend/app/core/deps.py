@@ -1,12 +1,10 @@
-from collections.abc import Generator
 
+from app.auth.model import User
+from app.core.database import get_db
+from app.core.security import decode_token
 from fastapi import Cookie, Depends, HTTPException, status
 from jose import JWTError
 from sqlalchemy.orm import Session
-
-from app.core.database import get_db
-from app.auth.model import User
-from app.core.security import decode_token
 
 
 def get_current_user(

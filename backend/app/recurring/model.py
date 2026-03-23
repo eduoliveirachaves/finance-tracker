@@ -1,11 +1,11 @@
 import typing
 from datetime import datetime
+
+from app.core.database import Base, _now, _uuid
 from pydantic import BaseModel
 from sqlalchemy import Boolean, CheckConstraint, ForeignKey, Index, Numeric, SmallInteger, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-
-from app.core.database import Base, _now, _uuid
 
 if typing.TYPE_CHECKING:
     from app.accounts.model import BankAccount, Card
@@ -19,19 +19,25 @@ class RecurringTransaction(Base):
     __table_args__ = (
         CheckConstraint("amount > 0", name="recurring_amount_positive"),
         CheckConstraint("type IN ('expense', 'income')", name="recurring_type_check"),
-        CheckConstraint("modality IN ('dinheiro','debito','credito','pix','transferencia')", name="recurring_modality_check"),
+        CheckConstraint(
+            "modality IN ('dinheiro','debito','credito','pix','transferencia')", name="recurring_modality_check"
+        ),
         CheckConstraint("due_day BETWEEN 1 AND 31", name="recurring_due_day_check"),
         Index("idx_recurring_user_active", "user_id", "active"),
     )
 
     id: Mapped[str] = mapped_column(UUID(as_uuid=False), primary_key=True, default=_uuid)
-    user_id: Mapped[str] = mapped_column(UUID(as_uuid=False), ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    user_id: Mapped[str] = mapped_column(
+        UUID(as_uuid=False), ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
     name: Mapped[str] = mapped_column(String(150), nullable=False)
     amount: Mapped[float] = mapped_column(Numeric(12, 2), nullable=False)
     type: Mapped[str] = mapped_column(String(10), nullable=False)
     category_id: Mapped[str] = mapped_column(UUID(as_uuid=False), ForeignKey("categories.id"), nullable=False)
     modality: Mapped[str] = mapped_column(String(20), nullable=False)
-    bank_account_id: Mapped[str | None] = mapped_column(UUID(as_uuid=False), ForeignKey("bank_accounts.id"), nullable=True)
+    bank_account_id: Mapped[str | None] = mapped_column(
+        UUID(as_uuid=False), ForeignKey("bank_accounts.id"), nullable=True
+    )
     card_id: Mapped[str | None] = mapped_column(UUID(as_uuid=False), ForeignKey("cards.id"), nullable=True)
     due_day: Mapped[int] = mapped_column(SmallInteger, nullable=False)
     active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)

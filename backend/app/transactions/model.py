@@ -1,12 +1,13 @@
 import typing
 from datetime import date as Date
 from datetime import datetime
-from pydantic import BaseModel
-from sqlalchemy import CheckConstraint, Date as SqlDate, ForeignKey, Index, Numeric, String, Text
-from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.database import Base, _now, _uuid
+from pydantic import BaseModel
+from sqlalchemy import CheckConstraint, ForeignKey, Index, Numeric, String, Text
+from sqlalchemy import Date as SqlDate
+from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 if typing.TYPE_CHECKING:
     from app.accounts.model import BankAccount, Card
@@ -20,20 +21,28 @@ class Transaction(Base):
     __table_args__ = (
         CheckConstraint("amount > 0", name="transaction_amount_positive"),
         CheckConstraint("type IN ('expense', 'income')", name="transaction_type_check"),
-        CheckConstraint("modality IN ('dinheiro','debito','credito','pix','transferencia')", name="transaction_modality_check"),
+        CheckConstraint(
+            "modality IN ('dinheiro','debito','credito','pix','transferencia')", name="transaction_modality_check"
+        ),
         Index("idx_transactions_user_date", "user_id", "date"),
     )
 
     id: Mapped[str] = mapped_column(UUID(as_uuid=False), primary_key=True, default=_uuid)
-    user_id: Mapped[str] = mapped_column(UUID(as_uuid=False), ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    user_id: Mapped[str] = mapped_column(
+        UUID(as_uuid=False), ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
     date: Mapped[datetime] = mapped_column(SqlDate, nullable=False)
     amount: Mapped[float] = mapped_column(Numeric(12, 2), nullable=False)
     type: Mapped[str] = mapped_column(String(10), nullable=False)
     category_id: Mapped[str] = mapped_column(UUID(as_uuid=False), ForeignKey("categories.id"), nullable=False)
     modality: Mapped[str] = mapped_column(String(20), nullable=False)
-    bank_account_id: Mapped[str | None] = mapped_column(UUID(as_uuid=False), ForeignKey("bank_accounts.id"), nullable=True)
+    bank_account_id: Mapped[str | None] = mapped_column(
+        UUID(as_uuid=False), ForeignKey("bank_accounts.id"), nullable=True
+    )
     card_id: Mapped[str | None] = mapped_column(UUID(as_uuid=False), ForeignKey("cards.id"), nullable=True)
-    recurring_id: Mapped[str | None] = mapped_column(UUID(as_uuid=False), ForeignKey("recurring_transactions.id", ondelete="SET NULL"), nullable=True)
+    recurring_id: Mapped[str | None] = mapped_column(
+        UUID(as_uuid=False), ForeignKey("recurring_transactions.id", ondelete="SET NULL"), nullable=True
+    )
     notes: Mapped[str | None] = mapped_column(Text, nullable=True)
     created_at: Mapped[datetime] = mapped_column(nullable=False, default=_now)
 

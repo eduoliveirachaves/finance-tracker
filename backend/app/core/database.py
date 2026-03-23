@@ -1,11 +1,10 @@
 import uuid
 from collections.abc import Generator
-from datetime import datetime, timezone
-
-from sqlalchemy import create_engine
-from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
+from datetime import UTC, datetime
 
 from app.core.config import get_settings
+from sqlalchemy import create_engine
+from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
 
 
 def _uuid() -> str:
@@ -13,7 +12,7 @@ def _uuid() -> str:
 
 
 def _now() -> datetime:
-    return datetime.now(timezone.utc)
+    return datetime.now(UTC)
 
 
 class Base(DeclarativeBase):

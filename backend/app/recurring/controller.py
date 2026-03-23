@@ -1,11 +1,10 @@
-from fastapi import APIRouter, Depends
-from sqlalchemy.orm import Session
-
+from app.auth.model import User
 from app.core.database import get_db
 from app.core.deps import get_current_user
-from app.auth.model import User
 from app.recurring import service
 from app.recurring.model import RecurringCreate, RecurringUpdate
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
 
 router = APIRouter(prefix="/recurring", tags=["recurring"])
 

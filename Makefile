@@ -13,7 +13,7 @@ migrate:
 	docker compose run --rm backend alembic upgrade head
 
 dev-backend:
-	cd backend && uvicorn main:app --reload
+	cd backend && POSTGRES_HOST=localhost POSTGRES_PORT=5435 uvicorn main:app --reload
 
 dev-frontend:
 	cd frontend && npm run dev

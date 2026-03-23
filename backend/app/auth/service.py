@@ -1,8 +1,7 @@
-from fastapi import HTTPException, status
-from sqlalchemy.orm import Session
-
 from app.auth.model import User
 from app.core.security import hash_password, verify_password
+from fastapi import HTTPException, status
+from sqlalchemy.orm import Session
 
 
 def register_user(db: Session, email: str, password: str) -> User:

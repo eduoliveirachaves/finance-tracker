@@ -1,8 +1,7 @@
-from fastapi import HTTPException, status
-from sqlalchemy.orm import Session, selectinload
-
 from app.accounts.model import BankAccount, Card
 from app.transactions.model import Transaction
+from fastapi import HTTPException, status
+from sqlalchemy.orm import Session, selectinload
 
 
 def list_accounts(db: Session, user_id: str) -> list[BankAccount]:
@@ -29,7 +28,11 @@ def update_account(db: Session, user_id: str, account_id: str, name: str) -> Ban
     account = db.query(BankAccount).filter(BankAccount.id == account_id, BankAccount.user_id == user_id).first()
     if not account:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Account not found")
-    if db.query(BankAccount).filter(BankAccount.user_id == user_id, BankAccount.name == name, BankAccount.id != account_id).first():
+    if (
+        db.query(BankAccount)
+        .filter(BankAccount.user_id == user_id, BankAccount.name == name, BankAccount.id != account_id)
+        .first()
+    ):
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Account name already in use")
     account.name = name
     db.commit()
@@ -54,7 +57,9 @@ def create_card(db: Session, user_id: str, account_id: str, name: str, card_type
     if not account:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Account not found")
     if card_type not in ("credit", "debit"):
-        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="Card type must be 'credit' or 'debit'")
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="Card type must be 'credit' or 'debit'"
+        )
     card = Card(bank_account_id=account_id, name=name, type=card_type)
     db.add(card)
     db.commit()

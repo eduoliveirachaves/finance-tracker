@@ -1,11 +1,11 @@
 import typing
 from datetime import datetime
+
+from app.core.database import Base, _now, _uuid
 from pydantic import BaseModel
 from sqlalchemy import CheckConstraint, ForeignKey, Index, Numeric, SmallInteger, String, UniqueConstraint
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-
-from app.core.database import Base, _now, _uuid
 
 if typing.TYPE_CHECKING:
     from app.auth.model import User
@@ -23,7 +23,9 @@ class MonthlyEstimate(Base):
     )
 
     id: Mapped[str] = mapped_column(UUID(as_uuid=False), primary_key=True, default=_uuid)
-    user_id: Mapped[str] = mapped_column(UUID(as_uuid=False), ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    user_id: Mapped[str] = mapped_column(
+        UUID(as_uuid=False), ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
     category_id: Mapped[str] = mapped_column(UUID(as_uuid=False), ForeignKey("categories.id"), nullable=False)
     year: Mapped[int] = mapped_column(SmallInteger, nullable=False)
     month: Mapped[int] = mapped_column(SmallInteger, nullable=False)

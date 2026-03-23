@@ -1,9 +1,8 @@
 from decimal import Decimal
 
+from app.estimates.model import MonthlyEstimate
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session, selectinload
-
-from app.estimates.model import MonthlyEstimate
 
 
 def _serialize(e: MonthlyEstimate) -> dict:
@@ -35,7 +34,9 @@ def get_estimates_for_month(db: Session, user_id: str, year: int, month: int) ->
     prev_year, prev_month = (year - 1, 12) if month == 1 else (year, month - 1)
     prev_estimates = (
         db.query(MonthlyEstimate)
-        .filter(MonthlyEstimate.user_id == user_id, MonthlyEstimate.year == prev_year, MonthlyEstimate.month == prev_month)
+        .filter(
+            MonthlyEstimate.user_id == user_id, MonthlyEstimate.year == prev_year, MonthlyEstimate.month == prev_month
+        )
         .all()
     )
     if prev_estimates:
@@ -81,7 +82,9 @@ def create_estimate(db: Session, user_id: str, data: dict) -> dict:
         .first()
     )
     if existing:
-        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Estimate already exists for this category/month/type")
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT, detail="Estimate already exists for this category/month/type"
+        )
 
     est = MonthlyEstimate(
         user_id=user_id,

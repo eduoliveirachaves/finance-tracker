@@ -1,11 +1,17 @@
-from fastapi import APIRouter, Depends
-from sqlalchemy.orm import Session
-
 from app.accounts import service
-from app.accounts.model import BankAccountCreate, BankAccountResponse, BankAccountUpdate, CardCreate, CardResponse, CardUpdate
+from app.accounts.model import (
+    BankAccountCreate,
+    BankAccountResponse,
+    BankAccountUpdate,
+    CardCreate,
+    CardResponse,
+    CardUpdate,
+)
 from app.auth.model import User
 from app.core.database import get_db
 from app.core.deps import get_current_user
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
 
 router = APIRouter(tags=["accounts"])
 
@@ -16,12 +22,19 @@ def list_accounts(current_user: User = Depends(get_current_user), db: Session = 
 
 
 @router.post("/accounts", response_model=BankAccountResponse, status_code=201)
-def create_account(payload: BankAccountCreate, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+def create_account(
+    payload: BankAccountCreate, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)
+):
     return service.create_account(db, current_user.id, payload.name)
 
 
 @router.put("/accounts/{account_id}", response_model=BankAccountResponse)
-def update_account(account_id: str, payload: BankAccountUpdate, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+def update_account(
+    account_id: str,
+    payload: BankAccountUpdate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
     return service.update_account(db, current_user.id, account_id, payload.name)
 
 
@@ -31,12 +44,16 @@ def delete_account(account_id: str, current_user: User = Depends(get_current_use
 
 
 @router.post("/accounts/{account_id}/cards", response_model=CardResponse, status_code=201)
-def create_card(account_id: str, payload: CardCreate, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+def create_card(
+    account_id: str, payload: CardCreate, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)
+):
     return service.create_card(db, current_user.id, account_id, payload.name, payload.type)
 
 
 @router.put("/cards/{card_id}", response_model=CardResponse)
-def update_card(card_id: str, payload: CardUpdate, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+def update_card(
+    card_id: str, payload: CardUpdate, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)
+):
     return service.update_card(db, current_user.id, card_id, payload.name, payload.type)
 
 

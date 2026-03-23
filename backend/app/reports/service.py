@@ -1,11 +1,10 @@
 from decimal import Decimal
 
-from sqlalchemy import and_, extract, func
-from sqlalchemy.orm import Session
-
 from app.categories.model import Category
 from app.estimates.model import MonthlyEstimate
 from app.transactions.model import Transaction
+from sqlalchemy import extract, func
+from sqlalchemy.orm import Session
 
 
 def get_dashboard(db: Session, user_id: str, year: int, month: int) -> dict:
@@ -105,6 +104,7 @@ def get_dashboard(db: Session, user_id: str, year: int, month: int) -> dict:
 def get_monthly_report(db: Session, user_id: str, year: int, month: int) -> dict:
     # Trigger lazy estimate carryover
     from app.estimates.service import get_estimates_for_month
+
     estimates = get_estimates_for_month(db, user_id, year, month)
 
     # Aggregate actuals by category + type
@@ -132,10 +132,14 @@ def get_monthly_report(db: Session, user_id: str, year: int, month: int) -> dict
 
     expense_rows = []
     income_rows = []
-    for cat_id, typ in sorted(all_keys, key=lambda k: categories.get(k[0], Category()).name if k[0] in categories else ""):
+    for cat_id, typ in sorted(
+        all_keys, key=lambda k: categories.get(k[0], Category()).name if k[0] in categories else ""
+    ):
         cat = categories.get(cat_id)
         cat_name = cat.name if cat else "Unknown"
-        est_amount = next((Decimal(str(e.amount)) for e in estimates if e.category_id == cat_id and e.type == typ), Decimal("0.00"))
+        est_amount = next(
+            (Decimal(str(e.amount)) for e in estimates if e.category_id == cat_id and e.type == typ), Decimal("0.00")
+        )
         actual = actual_map.get((cat_id, typ), Decimal("0.00"))
         difference = est_amount - actual
         row = {

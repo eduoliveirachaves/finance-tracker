@@ -1,27 +1,32 @@
-from fastapi import APIRouter, Depends
-from sqlalchemy.orm import Session
-
+from app.auth.model import User
 from app.core.database import get_db
 from app.core.deps import get_current_user
-from app.auth.model import User
 from app.estimates import service
 from app.estimates.model import EstimateCreate, EstimateUpdate
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
 
 router = APIRouter(prefix="/estimates", tags=["estimates"])
 
 
 @router.get("")
-def list_estimates(year: int, month: int, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+def list_estimates(
+    year: int, month: int, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)
+):
     return service.list_estimates(db, current_user.id, year, month)
 
 
 @router.post("", status_code=201)
-def create_estimate(payload: EstimateCreate, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+def create_estimate(
+    payload: EstimateCreate, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)
+):
     return service.create_estimate(db, current_user.id, payload.model_dump())
 
 
 @router.put("/{est_id}")
-def update_estimate(est_id: str, payload: EstimateUpdate, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+def update_estimate(
+    est_id: str, payload: EstimateUpdate, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)
+):
     return service.update_estimate(db, current_user.id, est_id, payload.amount)
 
 

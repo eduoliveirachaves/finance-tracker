@@ -1,13 +1,11 @@
-from datetime import date
 from decimal import Decimal
-
-from fastapi import HTTPException, status
-from sqlalchemy import extract
-from sqlalchemy.orm import Session, selectinload
 
 from app.accounts.model import BankAccount, Card
 from app.categories.model import Category
 from app.transactions.model import Transaction
+from fastapi import HTTPException, status
+from sqlalchemy import extract
+from sqlalchemy.orm import Session, selectinload
 
 
 def _load_opts():
@@ -61,7 +59,9 @@ def list_transactions(
 
 def create_transaction(db: Session, user_id: str, data: dict) -> dict:
     if not data.get("bank_account_id") and not data.get("card_id"):
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Either bank_account_id or card_id is required")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Either bank_account_id or card_id is required"
+        )
 
     # Validate ownership
     category = db.query(Category).filter(Category.id == data["category_id"], Category.user_id == user_id).first()
@@ -69,7 +69,11 @@ def create_transaction(db: Session, user_id: str, data: dict) -> dict:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Category not found")
 
     if data.get("bank_account_id"):
-        if not db.query(BankAccount).filter(BankAccount.id == data["bank_account_id"], BankAccount.user_id == user_id).first():
+        if (
+            not db.query(BankAccount)
+            .filter(BankAccount.id == data["bank_account_id"], BankAccount.user_id == user_id)
+            .first()
+        ):
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Bank account not found")
 
     if data.get("card_id"):

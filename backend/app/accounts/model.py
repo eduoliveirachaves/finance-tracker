@@ -1,11 +1,11 @@
 import typing
 from datetime import datetime
+
+from app.core.database import Base, _now, _uuid
 from pydantic import BaseModel
 from sqlalchemy import CheckConstraint, ForeignKey, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-
-from app.core.database import Base, _now, _uuid
 
 if typing.TYPE_CHECKING:
     from app.auth.model import User
@@ -17,7 +17,9 @@ class BankAccount(Base):
     __tablename__ = "bank_accounts"
 
     id: Mapped[str] = mapped_column(UUID(as_uuid=False), primary_key=True, default=_uuid)
-    user_id: Mapped[str] = mapped_column(UUID(as_uuid=False), ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    user_id: Mapped[str] = mapped_column(
+        UUID(as_uuid=False), ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
     name: Mapped[str] = mapped_column(String(100), nullable=False)
     created_at: Mapped[datetime] = mapped_column(nullable=False, default=_now)
 
@@ -29,12 +31,12 @@ class BankAccount(Base):
 
 class Card(Base):
     __tablename__ = "cards"
-    __table_args__ = (
-        CheckConstraint("type IN ('credit', 'debit')", name="card_type_check"),
-    )
+    __table_args__ = (CheckConstraint("type IN ('credit', 'debit')", name="card_type_check"),)
 
     id: Mapped[str] = mapped_column(UUID(as_uuid=False), primary_key=True, default=_uuid)
-    bank_account_id: Mapped[str] = mapped_column(UUID(as_uuid=False), ForeignKey("bank_accounts.id", ondelete="RESTRICT"), nullable=False)
+    bank_account_id: Mapped[str] = mapped_column(
+        UUID(as_uuid=False), ForeignKey("bank_accounts.id", ondelete="RESTRICT"), nullable=False
+    )
     name: Mapped[str] = mapped_column(String(100), nullable=False)
     type: Mapped[str] = mapped_column(String(20), nullable=False)
     created_at: Mapped[datetime] = mapped_column(nullable=False, default=_now)

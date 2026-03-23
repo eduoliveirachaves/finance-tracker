@@ -1,9 +1,8 @@
-from datetime import datetime, timezone
-
-from fastapi import HTTPException, status
-from sqlalchemy.orm import Session
+from datetime import UTC, datetime
 
 from app.categories.model import Category
+from fastapi import HTTPException, status
+from sqlalchemy.orm import Session
 
 
 def list_categories(db: Session, user_id: str, include_archived: bool = False) -> list[Category]:
@@ -62,7 +61,7 @@ def remove_category(db: Session, user_id: str, category_id: str) -> dict:
 
     has_transactions = db.query(Transaction).filter(Transaction.category_id == category_id).first()
     if has_transactions:
-        category.archived_at = datetime.now(timezone.utc)
+        category.archived_at = datetime.now(UTC)
         db.commit()
         return {"archived": True}
     else:

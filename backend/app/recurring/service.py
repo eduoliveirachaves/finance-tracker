@@ -2,12 +2,11 @@ import calendar
 from datetime import date
 from decimal import Decimal
 
+from app.recurring.model import RecurringTransaction
+from app.transactions.model import Transaction
 from fastapi import HTTPException, status
 from sqlalchemy import extract
 from sqlalchemy.orm import Session, selectinload
-
-from app.recurring.model import RecurringTransaction
-from app.transactions.model import Transaction
 
 
 def _load_opts():
@@ -80,7 +79,9 @@ def list_recurring(db: Session, user_id: str, active_only: bool = False) -> list
 
 def create_recurring(db: Session, user_id: str, data: dict) -> dict:
     if not data.get("bank_account_id") and not data.get("card_id"):
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Either bank_account_id or card_id is required")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Either bank_account_id or card_id is required"
+        )
 
     r = RecurringTransaction(
         user_id=user_id,
@@ -105,7 +106,11 @@ def create_recurring(db: Session, user_id: str, data: dict) -> dict:
 
 
 def update_recurring(db: Session, user_id: str, rec_id: str, data: dict) -> dict:
-    r = db.query(RecurringTransaction).filter(RecurringTransaction.id == rec_id, RecurringTransaction.user_id == user_id).first()
+    r = (
+        db.query(RecurringTransaction)
+        .filter(RecurringTransaction.id == rec_id, RecurringTransaction.user_id == user_id)
+        .first()
+    )
     if not r:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Recurring transaction not found")
 
@@ -121,7 +126,11 @@ def update_recurring(db: Session, user_id: str, rec_id: str, data: dict) -> dict
 
 
 def delete_recurring(db: Session, user_id: str, rec_id: str) -> None:
-    r = db.query(RecurringTransaction).filter(RecurringTransaction.id == rec_id, RecurringTransaction.user_id == user_id).first()
+    r = (
+        db.query(RecurringTransaction)
+        .filter(RecurringTransaction.id == rec_id, RecurringTransaction.user_id == user_id)
+        .first()
+    )
     if not r:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Recurring transaction not found")
     r.active = False

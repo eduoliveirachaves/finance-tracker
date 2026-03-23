@@ -10,7 +10,7 @@ dev-db:
 	docker compose up postgres -d
 
 migrate:
-	cd backend && alembic upgrade head
+	docker compose run --rm backend alembic upgrade head
 
 dev-backend:
 	cd backend && uvicorn main:app --reload

@@ -9,8 +9,15 @@ from sqlalchemy import engine_from_config, pool
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from app.core.config import get_settings
-from app.core.database import Base
-import app.core.models  # noqa: F401 — ensures all models are registered
+from app.core.database import Base 
+
+# Import all models to ensure they are registered on Base.metadata
+from app.auth.model import User
+from app.accounts.model import BankAccount, Card
+from app.categories.model import Category
+from app.transactions.model import Transaction
+from app.recurring.model import RecurringTransaction
+from app.estimates.model import MonthlyEstimate
 
 config = context.config
 

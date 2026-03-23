@@ -2,10 +2,10 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from app.accounts import service
-from app.accounts.schemas import BankAccountCreate, BankAccountResponse, BankAccountUpdate, CardCreate, CardResponse, CardUpdate
+from app.accounts.model import BankAccountCreate, BankAccountResponse, BankAccountUpdate, CardCreate, CardResponse, CardUpdate
+from app.auth.model import User
 from app.core.database import get_db
 from app.core.deps import get_current_user
-from app.core.models import User
 
 router = APIRouter(tags=["accounts"])
 

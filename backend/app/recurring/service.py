@@ -6,7 +6,8 @@ from fastapi import HTTPException, status
 from sqlalchemy import extract
 from sqlalchemy.orm import Session, selectinload
 
-from app.core.models import RecurringTransaction, Transaction
+from app.recurring.model import RecurringTransaction
+from app.transactions.model import Transaction
 
 
 def _load_opts():

@@ -1,7 +1,8 @@
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session, selectinload
 
-from app.core.models import BankAccount, Card, Transaction
+from app.accounts.model import BankAccount, Card
+from app.transactions.model import Transaction
 
 
 def list_accounts(db: Session, user_id: str) -> list[BankAccount]:

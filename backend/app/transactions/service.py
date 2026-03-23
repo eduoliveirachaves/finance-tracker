@@ -5,7 +5,9 @@ from fastapi import HTTPException, status
 from sqlalchemy import extract
 from sqlalchemy.orm import Session, selectinload
 
-from app.core.models import BankAccount, Card, Category, Transaction
+from app.accounts.model import BankAccount, Card
+from app.categories.model import Category
+from app.transactions.model import Transaction
 
 
 def _load_opts():

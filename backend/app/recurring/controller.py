@@ -3,9 +3,9 @@ from sqlalchemy.orm import Session
 
 from app.core.database import get_db
 from app.core.deps import get_current_user
-from app.core.models import User
+from app.auth.model import User
 from app.recurring import service
-from app.recurring.schemas import RecurringCreate, RecurringUpdate
+from app.recurring.model import RecurringCreate, RecurringUpdate
 
 router = APIRouter(prefix="/recurring", tags=["recurring"])
 

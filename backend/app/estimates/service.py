@@ -3,7 +3,7 @@ from decimal import Decimal
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session, selectinload
 
-from app.core.models import MonthlyEstimate
+from app.estimates.model import MonthlyEstimate
 
 
 def _serialize(e: MonthlyEstimate) -> dict:

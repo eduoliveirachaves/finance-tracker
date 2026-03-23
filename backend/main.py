@@ -1,14 +1,14 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.accounts.router import router as accounts_router
-from app.auth.router import router as auth_router
-from app.categories.router import router as categories_router
+from app.accounts.controller import router as accounts_router
+from app.auth.controller import router as auth_router
+from app.categories.controller import router as categories_router
 from app.core.config import get_settings
-from app.estimates.router import router as estimates_router
-from app.recurring.router import router as recurring_router
-from app.reports.router import router as reports_router
-from app.transactions.router import router as transactions_router
+from app.estimates.controller import router as estimates_router
+from app.recurring.controller import router as recurring_router
+from app.reports.controller import router as reports_router
+from app.transactions.controller import router as transactions_router
 
 settings = get_settings()
 

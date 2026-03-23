@@ -3,9 +3,9 @@ from sqlalchemy.orm import Session
 
 from app.core.database import get_db
 from app.core.deps import get_current_user
-from app.core.models import User
+from app.auth.model import User
 from app.transactions import service
-from app.transactions.schemas import TransactionCreate, TransactionUpdate
+from app.transactions.model import TransactionCreate, TransactionUpdate
 
 router = APIRouter(prefix="/transactions", tags=["transactions"])
 

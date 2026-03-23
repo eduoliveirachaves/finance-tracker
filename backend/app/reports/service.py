@@ -3,7 +3,9 @@ from decimal import Decimal
 from sqlalchemy import and_, extract, func
 from sqlalchemy.orm import Session
 
-from app.core.models import Category, MonthlyEstimate, Transaction
+from app.categories.model import Category
+from app.estimates.model import MonthlyEstimate
+from app.transactions.model import Transaction
 
 
 def get_dashboard(db: Session, user_id: str, year: int, month: int) -> dict:

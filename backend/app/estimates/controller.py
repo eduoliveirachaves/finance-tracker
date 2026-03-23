@@ -3,9 +3,9 @@ from sqlalchemy.orm import Session
 
 from app.core.database import get_db
 from app.core.deps import get_current_user
-from app.core.models import User
+from app.auth.model import User
 from app.estimates import service
-from app.estimates.schemas import EstimateCreate, EstimateUpdate
+from app.estimates.model import EstimateCreate, EstimateUpdate
 
 router = APIRouter(prefix="/estimates", tags=["estimates"])
 

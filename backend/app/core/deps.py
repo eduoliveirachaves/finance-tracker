@@ -5,7 +5,7 @@ from jose import JWTError
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
-from app.core.models import User
+from app.auth.model import User
 from app.core.security import decode_token
 
 

@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 
-from app.core.models import Category
+from app.categories.model import Category
 
 
 def list_categories(db: Session, user_id: str, include_archived: bool = False) -> list[Category]:
@@ -54,7 +54,7 @@ def rename_category(db: Session, user_id: str, category_id: str, name: str) -> C
 
 
 def remove_category(db: Session, user_id: str, category_id: str) -> dict:
-    from app.core.models import Transaction
+    from app.transactions.model import Transaction
 
     category = db.query(Category).filter(Category.id == category_id, Category.user_id == user_id).first()
     if not category:
